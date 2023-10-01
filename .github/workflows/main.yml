@@ -1,0 +1,30 @@
+name: Continuous Integration - Healthz Application
+'on':
+  pull_request:
+    branches:
+      - main
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE: '${{ secrets.DATABASE }}'
+      USER: '${{ secrets.USER }}'
+      PASS: '${{ secrets.PASS }}'
+      HOST: '${{ secrets.HOST }}'
+      DIALECT: '${{ secrets.DIALECT }}'
+    strategy:
+      matrix:
+        node-version:
+          - 16.x
+    steps:
+      - uses: actions/checkout@v2
+      - run: npm i
+      - name: 'Using, Node, Express, and Sequelize'
+        uses: actions/setup-node@v2
+        with:
+          node-version: '${{ matrix.node-version }}'
+          cache: npm
+      - run: sudo systemctl start mysql
+      - run: systemctl status mysql
+      - run: 'sudo mysql --user=${{ secrets.USER }} --password=${{ secrets.PASS }}'
+      - run: npm test
