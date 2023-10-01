@@ -8,8 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DATABASE: '${{ secrets.DATABASE }}'
-      USER: '${{ secrets.USER }}'
-      PASS: '${{ secrets.PASS }}'
+      USER: '${{ secrets.USER_ROOT }}'
+      PASS: '${{ secrets.PASS_ROOT }}'
       HOST: '${{ secrets.HOST }}'
       DIALECT: '${{ secrets.DIALECT }}'
     strategy:
@@ -26,5 +26,5 @@ jobs:
           cache: npm
       - run: sudo systemctl start mysql
       - run: systemctl status mysql
-      - run: 'sudo mysql --user=${{ secrets.USER }} --password=${{ secrets.PASS }}'
+      - run: sudo mysql --user=${{ secrets.USER_ROOT }} --password=${{ secrets.PASS_ROOT }} -e "create database ${{ secrets.DATABASE }}";
       - run: npm test
