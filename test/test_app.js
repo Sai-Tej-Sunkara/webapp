@@ -13,11 +13,11 @@ describe("Test for Successful Server Run", ()=>{
         const server = app.listen();
         const { address, port } = server.address();
           chai
-            .request(`http://${address}:${3000}`)
-            .post("/healthz")
+            .request(app)
+            .get("/healthz")
             .end((err, res) => {
               expect(err).to.be.null;
-              expect(res).to.have.status(405);
+              expect(res).to.have.status(200);
               done();
             });
         });
