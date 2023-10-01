@@ -9,7 +9,7 @@ const sequelize = require("../sequelize");
 chai.use(chaiHttp);
 
 describe("Test for Successful Server Run", ()=>{
-    it("Should Throw 405 Staus on POST request to Healthz", (done) => {
+    it("Should send 200 Staus on GET request to Healthz", (done) => {
         const server = app.listen();
         const { address, port } = server.address();
           chai
