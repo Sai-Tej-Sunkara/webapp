@@ -20,16 +20,28 @@ let create_table_and_insert_data = (sequelize) => {
       .pipe(csv())
       .on("data", async (data) => {
         try {
+          // Create a new user object with only the first_name, last_name, email, and password fields
+          const newUser = {
+            first_name: data.first_name,
+            last_name: data.last_name,
+            email: data.email,
+            password: await bcrypt.hash(data.password, 12),
+          };
+
+          // Delete any other fields in the user object
+          for (const key in newUser) {
+            if (key !== "first_name" && key !== "last_name" && key !== "email" && key !== "password") {
+              delete newUser[key];
+            }
+          }
+
+          // Save the user to the database
           const [user, created] = await User.findOrCreate({
             where: { email: data.email },
-            defaults: data,
+            defaults: newUser,
           });
 
-          user.changed("createdAt", false);
-          user.changed("updatedAt", false);
-
-          await user.save();
-
+          // Check if the user was created
           if (created) {
             console.log(`Inserted new user: ${data.first_name} ${data.last_name}`);
           } else {
