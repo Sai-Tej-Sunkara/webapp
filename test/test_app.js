@@ -4,7 +4,7 @@ const {expect, assert} = require("chai");
 const chaiHttp = require("chai-http");
 
 const app = require("../app");
-const sequelize = require("../sequelize");
+const { sequelize } = require("../sequelize");
 
 chai.use(chaiHttp);
 
