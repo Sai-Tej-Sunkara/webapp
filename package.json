@@ -7,6 +7,7 @@
     "test": "npx mocha --timeout 6000 ./test/test_app.js --exit"
   },
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "cookie-parser": "~1.4.4",
     "csv-parser": "^3.0.0",
     "debug": "~2.6.9",
