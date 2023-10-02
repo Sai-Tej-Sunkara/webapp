@@ -66,7 +66,7 @@ const Assignment = sequelize.define("Assignment", {
       max: 10,
     },
   },
-  numOfAttempts: {
+  num_of_attemps: {
     type: sequelize.Sequelize.INTEGER,
     allowNull: false,
   },
@@ -86,11 +86,9 @@ const Assignment = sequelize.define("Assignment", {
     type: sequelize.Sequelize.INTEGER,
     allowNull: false,
     noUpdate: true,
-    references: {
-      model: "User",
-      key: "id",
-    },
   },
+}, {
+  timestamps: null,
 });
 
 module.exports = { sequelize, User, Assignment };
