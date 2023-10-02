@@ -5,12 +5,13 @@ const { sequelize, User } = require("./sequelize");
 
 const fs = require("fs");
 const csv = require("csv-parser");
+const bcrypt = require("bcrypt");
 
 const app = express();
 
 const filepath = "/Users/saitejsunkara/Desktop/CloudComputing/webapp/data/users.csv";
 
-let create_table = (sequelize) => {
+let create_table_and_insert_data = (sequelize) => {
   sequelize
     .sync()
     .then(() => {
@@ -23,6 +24,11 @@ let create_table = (sequelize) => {
             where: { email: data.email },
             defaults: data,
           });
+
+          user.changed("createdAt", false);
+          user.changed("updatedAt", false);
+
+          await user.save();
 
           if (created) {
             console.log(`Inserted new user: ${data.first_name} ${data.last_name}`);
@@ -47,7 +53,7 @@ let create_table = (sequelize) => {
 
 sequelize.authenticate().then(()=>{
   console.log("Database Connection Established Successfully!");
-  create_table(sequelize);
+  create_table_and_insert_data(sequelize);
 }).catch((error)=>{
   console.error("Database Connection Haven't Been Established");
   throw error;
