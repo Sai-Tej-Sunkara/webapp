@@ -1,10 +1,13 @@
 /** @format */
 
 const express = require("express");
-const { sequelize, User } = require("./sequelize");
+const assignments = require("./assignments/assignments");
+const { sequelize, User, Assignment } = require("./sequelize");
 require("./file");
 
 const app = express();
+
+app.use("/v1", assignments);
 
 app.get("/healthz", async (req, res) => {
   if(req.headers["content-length"]>0) {

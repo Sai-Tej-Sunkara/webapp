@@ -48,4 +48,49 @@ const User = sequelize.define("User", {
   timestamps: null,
 });
 
-module.exports = { sequelize, User };
+const Assignment = sequelize.define("Assignment", {
+  id: {
+    type: Sequelize.DataTypes.UUID,
+    primaryKey: true,
+    defaultValue: Sequelize.UUIDV4(),
+  },
+  name: {
+    type: sequelize.Sequelize.STRING,
+    allowNull: false,
+  },
+  points: {
+    type: sequelize.Sequelize.INTEGER,
+    allowNull: false,
+    validate: {
+      min: 0,
+      max: 10,
+    },
+  },
+  numOfAttempts: {
+    type: sequelize.Sequelize.INTEGER,
+    allowNull: false,
+  },
+  deadline: {
+    type: sequelize.Sequelize.DATE,
+    allowNull: false,
+  },
+  assignment_created: {
+    type: sequelize.Sequelize.DATE,
+    defaultValue: Sequelize.fn("NOW"),
+  },
+  assignment_updated: {
+    type: sequelize.Sequelize.DATE,
+    defaultValue: Sequelize.fn("NOW"),
+  },
+  user_id: {
+    type: sequelize.Sequelize.INTEGER,
+    allowNull: false,
+    noUpdate: true,
+    references: {
+      model: "User",
+      key: "id",
+    },
+  },
+});
+
+module.exports = { sequelize, User, Assignment };
