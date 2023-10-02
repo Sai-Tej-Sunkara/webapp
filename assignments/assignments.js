@@ -56,6 +56,14 @@ router.post("/assignments", async (req, res)=>{
 
     if(validation.isValid) {
         let user_id_validated = validation.user;
+        if(req.headers["content-length"]>0) {
+            res.status(400).send({Status: 400, message:"Please check your headers. Body has some data in get request, which is not valid."});
+            return;
+        }
+        if(Object.keys(req.query).length > 0 ) {
+            res.status(400).send({Status: 400, message:"Please check your headers. Query Parameters has some data in get request, which is not valid."});
+            return;
+        }
         if(Object.keys(req.body).length==0) {
             res.status(400);
             res.send({"Status": 400, "Message": "Request Body only Supports JSON format and need to have all fields"});
