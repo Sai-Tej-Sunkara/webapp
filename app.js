@@ -15,43 +15,39 @@ let create_table = (sequelize) => {
     .sync()
     .then(() => {
       console.log("Table created if it doesn't exist.");
+      fs.createReadStream(filepath)
+      .pipe(csv())
+      .on("data", async (data) => {
+        try {
+          const [user, created] = await User.findOrCreate({
+            where: { email: data.email },
+            defaults: data,
+          });
+
+          if (created) {
+            console.log(`Inserted new user: ${data.first_name} ${data.last_name}`);
+          } else {
+            console.log(`User with email ${data.email} already exists, skipping.`);
+          }
+        } catch (error) {
+          console.error("Error inserting user:", error);
+        }
+      })
+      .on("end", () => {
+        console.log("CSV data processing completed");
+      })
+      .on("error", (error) => {
+        console.error("Error reading CSV: ", error);
+      });
     })
     .catch((error) => {
       console.error("Error creating table: ", error);
     });
 }
 
-let read_csv_and_insert_data = (sequelize) => {
-  fs.createReadStream(filepath)
-    .pipe(csv())
-    .on("data", async (data) => {
-      try {
-        const [user, created] = await User.findOrCreate({
-          where: { email: data.email },
-          defaults: data,
-        });
-
-        if (created) {
-          console.log(`Inserted new user: ${data.first_name} ${data.last_name}`);
-        } else {
-          console.log(`User with email ${data.email} already exists, skipping.`);
-        }
-      } catch (error) {
-        console.error("Error inserting user:", error);
-      }
-    })
-    .on("end", () => {
-      console.log("CSV data processing completed");
-    })
-    .on("error", (error) => {
-      console.error("Error reading CSV: ", error);
-    });
-}
-
 sequelize.authenticate().then(()=>{
   console.log("Database Connection Established Successfully!");
   create_table(sequelize);
-  read_csv_and_insert_data(sequelize);
 }).catch((error)=>{
   console.error("Database Connection Haven't Been Established");
   throw error;
