@@ -5,6 +5,13 @@ const sequelize = require("./sequelize");
 
 const app = express();
 
+sequelize.authenticate().then(()=>{
+  console.log("Database Connection Established Successfully!");
+}).catch((error)=>{
+  console.error("Database Connection Haven't Been Established");
+  throw error;
+})
+
 app.get("/healthz", async (req, res) => {
   if(req.headers["content-length"]>0) {
     res.status(400).end();
