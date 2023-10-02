@@ -17,13 +17,27 @@ router.get("/assignments", async (req, res)=>{
     let validation = await user_authentication(req.headers.authorization);
 
     if(validation.isValid) {
+        if(req.headers["content-length"]>0) {
+            res.status(400).send({Status: 400, message:"Please check your headers. Body has some data in get request, which is not valid."});
+            return;
+        }
+        if(Object.keys(req.query).length > 0 ) {
+            res.status(400).send({Status: 400, message:"Please check your headers. Query Parameters has some data in get request, which is not valid."});
+            return;
+        }
         let user_id_validated = validation.user;
         try {
-            // Fill code here to find all assignments in Assignment table
-        } 
-        catch (error) {
+            const assignments = await Assignment.findAll({
+              where: {
+                user_id: user_id_validated,
+              },
+            });
+        
+            res.status(200).send(assignments);
+          } 
+          catch (error) {
             throw error;
-        }
+          }
     }
     else {
         res.status(401);
@@ -93,8 +107,7 @@ router.post("/assignments", async (req, res)=>{
                       delete newAssignment[key];
                     }
                   }
-        
-                // // Fill code here for inserting newAssignment in Assignment table of sequelize and send 200 status code as output
+
                 const createdAssignment = await Assignment.create(newAssignment);
                 res.status(201).send({ "Status": 201, "Message": "Assignment created successfully" });
             }
