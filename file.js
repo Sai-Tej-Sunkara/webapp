@@ -58,6 +58,6 @@ sequelize.authenticate().then(()=>{
   console.log("Database Connection Established Successfully!");
   create_table_and_insert_data(sequelize);
 }).catch((error)=>{
-  console.error("Database Connection Haven't Been Established");
-  throw error;
+    console.error(error);
+    console.error("Database Connection Haven't Been Established");
 })

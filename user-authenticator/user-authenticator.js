@@ -14,7 +14,7 @@ const check_user = async (username, password) => {
       }
       return {isValid: false, message: "Authentication Failed - Password Not Valid"};
     } catch (error) {
-      throw error;
+      console.error(error);
     }
   };
 
