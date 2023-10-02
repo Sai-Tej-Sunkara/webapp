@@ -122,4 +122,129 @@ router.post("/assignments", async (req, res)=>{
     }
 })
 
+router.get("/assignments/:id", async (req, res)=>{
+    if(!req.headers.authorization)
+   {
+       res.status(401);
+       res.send({"Status": 401, "Message": "Please provide an Auth token."});
+       return;
+   }
+    let validation = await user_authentication(req.headers.authorization);
+
+    if(validation.isValid) {
+        if(req.headers["content-length"]>0) {
+            res.status(400).send({Status: 400, message:"Please check your headers. Body has some data in get request, which is not valid."});
+            return;
+        }
+        if(Object.keys(req.query).length > 0 ) {
+            res.status(400).send({Status: 400, message:"Please check your headers. Query Parameters has some data in get request, which is not valid."});
+            return;
+        }
+        let assignment_id = req.params.id;
+        let user_id_validated = validation.user;
+        console.log(assignment_id, user_id_validated);
+        try {
+            const assignments = await Assignment.findAll({
+              where: {
+                user_id: user_id_validated,
+                id: assignment_id
+              },
+            });
+
+            if(assignments.length>0) {
+                res.status(200).send(assignments);
+            }
+            else {
+                const assignments_check_1 = await Assignment.findAll({
+                    where: {
+                      id: assignment_id
+                    },
+                  });
+                if(assignments_check_1.length > 0) {
+                    res.status(403).send({Status: 403, message: "Forbidden to access others assignemnts!"});
+                }
+                else {
+                    res.status(404).send({Status: 404, message: "No Records Found with "+id+" in your assignments"});
+                }
+            }
+            
+          } 
+          catch (error) {
+            throw error;
+          }
+    }
+    else {
+        res.status(401);
+        res.send({"Status": 401, "Message": validation.message});
+    }
+})
+
+router.delete("/assignments/:id", async (req, res)=>{
+    if(!req.headers.authorization)
+   {
+       res.status(401);
+       res.send({"Status": 401, "Message": "Please provide an Auth token."});
+       return;
+   }
+    let validation = await user_authentication(req.headers.authorization);
+
+    if(validation.isValid) {
+        if(req.headers["content-length"]>0) {
+            res.status(400).send({Status: 400, message:"Please check your headers. Body has some data in get request, which is not valid."});
+            return;
+        }
+        if(Object.keys(req.query).length > 0 ) {
+            res.status(400).send({Status: 400, message:"Please check your headers. Query Parameters has some data in get request, which is not valid."});
+            return;
+        }
+        let assignment_id = req.params.id;
+        let user_id_validated = validation.user;
+        console.log(assignment_id, user_id_validated);
+        try {
+            const assignments = await Assignment.findAll({
+              where: {
+                user_id: user_id_validated,
+                id: assignment_id
+              },
+            });
+
+            if(assignments.length>0) {
+                try {
+                    await Promise.all(
+                        assignments.map(async (assignment) => {
+                        await assignment.destroy();
+                      })
+                    );
+              
+                    res.status(204).send({ Status: 204, message: "Content Deleted Successfully!" });
+                  } catch (error) {
+                    console.error(error);
+                    res.status(500).send({ Status: 500, message: "Internal server error" });
+                  }
+            }
+            else {
+                const assignments_check_1 = await Assignment.findAll({
+                    where: {
+                      id: assignment_id
+                    },
+                  });
+                if(assignments_check_1.length > 0) {
+                    res.status(403).send({Status: 403, message: "Forbidden to delete others assignemnts!"});
+                }
+                else {
+                    res.status(404).send({Status: 404, message: "No Records Found with "+id+" in your assignments"});
+                }
+            }
+            
+          } 
+          catch (error) {
+            throw error;
+          }
+    }
+    else {
+        res.status(401);
+        res.send({"Status": 401, "Message": validation.message});
+    }
+})
+
 module.exports = router;
