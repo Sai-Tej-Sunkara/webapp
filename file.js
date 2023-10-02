@@ -1,4 +1,4 @@
-const { sequelize, User } = require("./sequelize");
+const { sequelize, User, Assignment } = require("./sequelize");
 const fs = require("fs");
 const csv = require("csv-parser");
 const bcrypt = require("bcrypt");
