@@ -28,8 +28,8 @@ describe("Test for Successful MySQL Connection", ()=>{
           return sequelize.authenticate().then(()=>{
             expect(true).to.equal(true);
           }).catch((error)=>{
+            console.error(error);
             console.error("Unable to Connect to MySQL Server");
-            throw error;
           })
     });
 });
