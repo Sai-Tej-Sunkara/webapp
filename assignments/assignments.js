@@ -146,7 +146,7 @@ router.get("/assignments/:id", async (req, res)=>{
         }
         let assignment_id = req.params.id;
         let user_id_validated = validation.user;
-        console.log(assignment_id, user_id_validated);
+        // console.log(assignment_id, user_id_validated);
         try {
             const assignments = await Assignment.findAll({
               where: {
@@ -203,7 +203,7 @@ router.delete("/assignments/:id", async (req, res)=>{
         }
         let assignment_id = req.params.id;
         let user_id_validated = validation.user;
-        console.log(assignment_id, user_id_validated);
+        // console.log(assignment_id, user_id_validated);
         try {
             const assignments = await Assignment.findAll({
               where: {
@@ -267,7 +267,7 @@ router.put("/assignments/:id", async (req, res)=>{
         }
         let assignment_id = req.params.id;
         let user_id_validated = validation.user;
-        console.log(assignment_id, user_id_validated);
+        // console.log(assignment_id, user_id_validated);
 
         if(Object.keys(req.body).length==0) {
             res.status(400);
