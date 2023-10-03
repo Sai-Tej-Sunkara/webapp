@@ -58,12 +58,20 @@ router.get("/assignments", async (req, res)=>{
           } 
           catch (error) {
             console.error(error);
+            res.status(503).send("Tables aren't providing information or database could not be providing information.");
           }
     }
     else {
-        res.status(401);
-        res.send({"Status": 401, "Message": validation.message});
-        return;
+        if(validation.status == 503) {
+            res.status(503);
+            res.send({"Status": 503, "Message": validation.message});
+            return;    
+        }
+        else {
+            res.status(401);
+            res.send({"Status": 401, "Message": validation.message});
+            return;
+        }
     }
     }
 })
@@ -153,12 +161,20 @@ router.post("/assignments", async (req, res)=>{
         } 
         catch (error) {
             console.error(error);
+            res.status(503).send("Tables aren't providing information or database could not be providing information.");
         }
     }
     else {
-        res.status(401);
-        res.send({"Status": 401, "Message": validation.message});
-        return;
+        if(validation.status == 503) {
+            res.status(503);
+            res.send({"Status": 503, "Message": validation.message});
+            return;    
+        }
+        else {
+            res.status(401);
+            res.send({"Status": 401, "Message": validation.message});
+            return;
+        }
     }
     }
 })
@@ -220,12 +236,20 @@ router.get("/assignments/:id", async (req, res)=>{
           } 
           catch (error) {
             console.error(error);
+            res.status(503).send("Tables aren't providing information or database could not be providing information.");
           }
     }
     else {
-        res.status(401);
-        res.send({"Status": 401, "Message": validation.message});
-        return;
+        if(validation.status == 503) {
+            res.status(503);
+            res.send({"Status": 503, "Message": validation.message});
+            return;    
+        }
+        else {
+            res.status(401);
+            res.send({"Status": 401, "Message": validation.message});
+            return;
+        }
     }
     }
 })
@@ -275,6 +299,7 @@ router.delete("/assignments/:id", async (req, res)=>{
                     return;
                   } catch (error) {
                     console.error(error);
+                    res.status(503).send("Tables aren't providing information or database could not be providing information.");
                   }
             }
             else {
@@ -296,12 +321,20 @@ router.delete("/assignments/:id", async (req, res)=>{
           } 
           catch (error) {
             console.error(error);
+            res.status(503).send("Tables aren't providing information or database could not be providing information.");
           }
     }
     else {
-        res.status(401);
-        res.send({"Status": 401, "Message": validation.message});
-        return;
+        if(validation.status == 503) {
+            res.status(503);
+            res.send({"Status": 503, "Message": validation.message});
+            return;    
+        }
+        else {
+            res.status(401);
+            res.send({"Status": 401, "Message": validation.message});
+            return;
+        }
     }
     }
 })
@@ -420,6 +453,7 @@ router.put("/assignments/:id", async (req, res)=>{
                         return;
                         } catch (error) {
                             console.error(error);
+                            res.status(503).send("Tables aren't providing information or database could not be providing information.");
                         }
                   }
                   else {
@@ -442,12 +476,20 @@ router.put("/assignments/:id", async (req, res)=>{
           } 
           catch (error) {
             console.error(error);
+            res.status(503).send("Tables aren't providing information or database could not be providing information.");
           }
     }
     else {
-        res.status(401);
-        res.send({"Status": 401, "Message": validation.message});
-        return;
+        if(validation.status == 503) {
+            res.status(503);
+            res.send({"Status": 503, "Message": validation.message});
+            return;    
+        }
+        else {
+            res.status(401);
+            res.send({"Status": 401, "Message": validation.message});
+            return;
+        }
     }
     }
 })
