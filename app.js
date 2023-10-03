@@ -3,9 +3,11 @@
 const express = require("express");
 const assignments = require("./assignments/assignments");
 const { sequelize, User, Assignment } = require("./sequelize");
-require("./file");
+const { create_table_and_insert_data, authenticateDatabase } = require("./file");
 
 const app = express();
+
+authenticateDatabase();
 
 app.use("/v1", assignments);
 
