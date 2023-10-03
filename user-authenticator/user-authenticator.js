@@ -1,20 +1,27 @@
-const { User } = require("../sequelize");
+const { User, sequelize, Assignment } = require("../sequelize");
 const bcrypt = require("bcrypt");
 
 const check_user = async (username, password) => {
     try {
-      const user = await User.findOne({ where: { email: username } });
-      if (!user) {
-        return {isValid: false, message: "Authentication Failed - User not found"}
+      await sequelize.authenticate();
+      try {
+        const user = await User.findOne({ where: { email: username } });
+        if (!user) {
+          return {isValid: false, message: "Authentication Failed - User not found"}
+        }
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+    
+        if (isPasswordValid) {
+          return {isValid: true, message: "Authentication Success", user: user.id};
+        }
+        return {isValid: false, message: "Authentication Failed - Password Not Valid"};
+      } catch (error) {
+        console.error(error);
+        return {isValid: false, message: "Database or Table isn't providing information right now. Never worry. I have been configured to automatically Create Tables for You.", status: 503};
       }
-      const isPasswordValid = await bcrypt.compare(password, user.password);
-  
-      if (isPasswordValid) {
-        return {isValid: true, message: "Authentication Success", user: user.id};
-      }
-      return {isValid: false, message: "Authentication Failed - Password Not Valid"};
     } catch (error) {
       console.error(error);
+      return {isValid: false, message: "Database or Table isn't providing information right now. Never worry. I have been configured to automatically Create Tables for You.", status: 503};
     }
   };
 
