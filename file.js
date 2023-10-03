@@ -2,8 +2,9 @@ const { sequelize, User, Assignment } = require("./sequelize");
 const fs = require("fs");
 const csv = require("csv-parser");
 const bcrypt = require("bcrypt");
+const path = require("path");
 
-const filepath = "/Users/saitejsunkara/Desktop/CloudComputing/webapp/data/users.csv";
+const filepath = path.join(__dirname, "./data/users.csv");
 
 let create_table_and_insert_data = (sequelize) => {
   sequelize

@@ -33,7 +33,19 @@ router.get("/assignments", async (req, res)=>{
               },
             });
         
-            res.status(200).send(assignments);
+            let result = [];
+            assignments.map((assignment)=>{
+                let newAssignment = {};
+                newAssignment.id = assignment.id;
+                newAssignment.name = assignment.name;
+                newAssignment.points = assignment.points;
+                newAssignment.num_of_attemps = assignment.num_of_attemps;
+                newAssignment.deadline = assignment.deadline;
+                newAssignment.assignment_created = assignment.assignment_created;
+                newAssignment.assignment_updated = assignment.assignment_updated;
+                result.push(newAssignment);
+            })
+            res.status(200).send(result);
           } 
           catch (error) {
             console.error(error);
@@ -156,7 +168,19 @@ router.get("/assignments/:id", async (req, res)=>{
             });
 
             if(assignments.length>0) {
-                res.status(200).send(assignments);
+                    let result = [];
+                    assignments.map((assignment)=>{
+                    let newAssignment = {};
+                    newAssignment.id = assignment.id;
+                    newAssignment.name = assignment.name;
+                    newAssignment.points = assignment.points;
+                    newAssignment.num_of_attemps = assignment.num_of_attemps;
+                    newAssignment.deadline = assignment.deadline;
+                    newAssignment.assignment_created = assignment.assignment_created;
+                    newAssignment.assignment_updated = assignment.assignment_updated;
+                    result.push(newAssignment);
+                })
+                res.status(200).send(result);
             }
             else {
                 const assignments_check_1 = await Assignment.findAll({
