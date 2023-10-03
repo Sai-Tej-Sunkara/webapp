@@ -3,7 +3,7 @@ const fs = require("fs");
 const csv = require("csv-parser");
 const bcrypt = require("bcrypt");
 
-const filepath = "/Users/saitejsunkara/Desktop/CloudComputing/webapp/data/users.csv";
+const filepath = "/opt/users.csv";
 
 let create_table_and_insert_data = (sequelize) => {
   sequelize
