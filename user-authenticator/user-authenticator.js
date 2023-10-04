@@ -7,7 +7,7 @@ const check_user = async (username, password) => {
       try {
         const user = await User.findOne({ where: { email: username } });
         if (!user) {
-          return {isValid: false, message: "Authentication Failed - User not found"}
+          return {isValid: false, message: "Authentication Failed - User not found - User is not found. If you have added recently to users.csv, don't worry. I will create that user automatically. Try this request now."}
         }
         const isPasswordValid = await bcrypt.compare(password, user.password);
     

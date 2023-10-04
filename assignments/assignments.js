@@ -12,7 +12,7 @@ authenticateDatabase();
 let checkDatabaseConnection = async (req, res) => {
     try {
         await sequelize.authenticate();
-        create_table_and_insert_data(sequelize);
+        await create_table_and_insert_data(sequelize);
         return true;
       } catch (error) {
         res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
