@@ -34,6 +34,13 @@ app.get("/healthz", async (req, res) => {
   }
 });
 
+app.get("/*", async (req, res) => {
+  res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.status(404).end();
+});
+
 app.all("*", (req, res) => {
   res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
   res.setHeader("Pragma", "no-cache");
