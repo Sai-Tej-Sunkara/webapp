@@ -48,9 +48,10 @@ router.get("/assignments", async (req, res)=>{
         let user_id_validated = validation.user;
         try {
             const assignments = await Assignment.findAll({
-              where: {
-                user_id: user_id_validated,
-              },
+            // As per Tejas Parikh Current Discussion in Canvas
+                //   where: {
+            //     user_id: user_id_validated,
+            //   },
             });
         
             let result = [];
@@ -248,7 +249,22 @@ router.get("/assignments/:id", async (req, res)=>{
                   });
                   console.log(assignments_check_1.length);
                 if(assignments_check_1.length != 0) {
-                    res.status(403).send({Status: 403, message: "Forbidden to access others assignemnts!"});
+                    // res.status(403).send({Status: 403, message: "Forbidden to access others assignemnts!"});
+                    // return;
+                    // As per Tejas Parikh Current Discussion in Canvas
+                    let result = [];
+                    assignments_check_1.map((assignment)=>{
+                    let newAssignment = {};
+                    newAssignment.id = assignment.id;
+                    newAssignment.name = assignment.name;
+                    newAssignment.points = assignment.points;
+                    newAssignment.num_of_attemps = assignment.num_of_attemps;
+                    newAssignment.deadline = assignment.deadline;
+                    newAssignment.assignment_created = assignment.assignment_created;
+                    newAssignment.assignment_updated = assignment.assignment_updated;
+                    result.push(newAssignment);
+                    })
+                    res.status(200).send(result);
                     return;
                 }
                 else {
