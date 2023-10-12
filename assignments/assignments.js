@@ -168,7 +168,18 @@ router.post("/assignments", async (req, res)=>{
                   }
 
                 const createdAssignment = await Assignment.create(newAssignment);
-                res.status(201).send({ "Status": 201, "Message": "Assignment created successfully" });
+                console.log(createdAssignment)
+
+                let postResponse = {
+                    "id": createdAssignment.id,
+                    "name": createdAssignment.name,
+                    "points": createdAssignment.points,
+                    "num_of_attemps": createdAssignment.num_of_attemps,
+                    "deadline": createdAssignment.deadline,
+                    "assignment_created": new Date(),
+                    "assignment_updated": new Date()
+                }
+                res.status(201).send(postResponse);
                 return;
             }
         } 
@@ -335,11 +346,11 @@ router.delete("/assignments/:id", async (req, res)=>{
                       })
                     );
               
-                    res.status(204).send({ Status: 204, message: "Content Deleted Successfully!" });
+                    res.status(201).end();
                     return;
                   } catch (error) {
                     console.error(error);
-                    res.status(503).send("Tables aren't providing information or database could not be providing information.");
+                    res.status(503).send({status: 503, message: "Tables aren't providing information or database could not be providing information or record might be deleted."});
                   }
             }
             else {
