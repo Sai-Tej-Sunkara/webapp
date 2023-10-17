@@ -16,7 +16,7 @@ jobs:
     - name: Install Packer
       run: |
         curl -fsSL https://releases.hashicorp.com/packer/1.8.0/packer_1.8.0_linux_amd64.zip -o packer.zip
-        unzip packer.zip
+        unzip packer.zip -y
         chmod +x packer
         mv packer /usr/local/bin/
         packer --version
