@@ -86,4 +86,11 @@ source "amazon-ebs" "amazon-machine-image-002728188" {
 build {
     name = "CSYE_6225_PACKER"
     sources = ["source.amazon-ebs.amazon-machine-image-002728188"]
+    provisioner "file" {
+        source      = "webapp.zip"
+        destination = "webapp.zip"
+    }
+    provisioner "shell" {
+        script = "source.sh"
+    }
 }
