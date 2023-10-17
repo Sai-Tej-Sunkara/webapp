@@ -1,37 +1,30 @@
 name: Continuous Integration - Packer Validation
-
-on:
+'on':
   push:
     branches:
       - main
-
 env:
-  KEY_ID: ${{ secrets.KEY_ID }}
-  SECRET_KEY: ${{ secrets.SECRET_KEY }}
-  AWS_REGION: ${{ secrets.AWS_REGION }}
-  SOURCE_AMI: ${{ secrets.SOURCE_AMI }}
-  ARTIFACT_NAME: ../packer/webapp.zip
-
+  KEY_ID: '${{ secrets.KEY_ID }}'
+  SECRET_KEY: '${{ secrets.SECRET_KEY }}'
+  AWS_REGION: '${{ secrets.AWS_REGION }}'
+  SOURCE_AMI: '${{ secrets.SOURCE_AMI }}'
+  ARTIFACT_NAME: ./packer/webapp.zip
 jobs:
   build:
     name: Validating Packer
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Repository
+      - name: Git Repo
         uses: actions/checkout@v2
-
-      - name: List Files in Repository
-        run: ls -la
-        working-directory: ./
-
-      - name: Zip Repository
-        run: zip -r ../packer/webapp.zip ./
-        working-directory: ${{ github.workspace }}
-
-      - name: Validate Packer Configuration
+      - name: Zip Repo
+        uses: montudor/action-zip@v1
+        with:
+          args: zip webapp.zip .
+          source: .
+          destination: .
+      - name: Validation
         uses: hashicorp/packer-github-actions@master
         with:
           command: validate
           target: amazon-machine-image.pkr.hcl
-          working-directory: ./packer/
+          working_directory: ./packer/
