@@ -62,8 +62,20 @@ variable "logical_device_name" {
     default = env("LOGICAL_DEVICE_NAME")
 }
 
+variable "access_key" {
+    type = string
+    default = env("AWS_ACCESS_KEY_ID")
+}
+
+variable "secret_key" {
+    type = string
+    default = env("AWS_SECRET_ACCESS_KEY")
+}
+
 source "amazon-ebs" "amazon-machine-image-002728188" {
-    profile         = var.profile
+    # profile         = var.profile
+    access_key   = "${var.access_key}"
+    secret_key   = "${var.secret_key}"
     region          = var.aws_region
     ami_users       = [var.dev_ami_user, var.demo_ami_user]
     ami_name        = "${formatdate("YYYY_MM_DD_HH_MM", timestamp())}_Cloud_Computing_6225_Debain"
