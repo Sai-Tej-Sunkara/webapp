@@ -103,6 +103,6 @@ build {
         destination = "webapp.zip"
     }
     provisioner "shell" {
-        script = "source.sh"
+        script = "./packer/source.sh"
     }
 }
