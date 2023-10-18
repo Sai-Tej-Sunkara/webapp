@@ -35,5 +35,4 @@ jobs:
 
     - name: Validate Packer Configuration
       run: |
-        cd packer
-        packer validate amazon-machine-image.pkr.hcl
+        packer validate packer/amazon-machine-image.pkr.hcl
