@@ -29,6 +29,7 @@ Environment="DATABASE=$DATABASE"
 Environment="HOST=$HOST"
 Environment="USER=$USER"
 Environment="PASS=$PASS"
+Environment="DIALECT=$DIALECT"
 Type=simple
 User=admin
 WorkingDirectory=/home/admin/webapp/

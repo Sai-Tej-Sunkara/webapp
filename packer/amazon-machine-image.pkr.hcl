@@ -133,7 +133,8 @@ build {
       "DATABASE=${var.database}",
       "USER=${var.user}",
       "PASS=${var.pass}",
-      "HOST=${var.host}"
+      "HOST=${var.host}",
+      "DIALECT=${var.dialect}"
     ]
   }
 }
