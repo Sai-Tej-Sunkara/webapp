@@ -1,5 +1,13 @@
 #!/bin/bash
 set -e
+export HOST="localhost"
+export USER="root"
+export PASS="root"
+export DATABASE="healthz"
+export DIALECT="mysql"
+export DEBIAN_FRONTEND="noninteractive"
+export DEBIAN_USER="admin"
+export SERVICE_TYPE="simple"
 sudo apt-get update -y
 sudo apt-get upgrade -y
 sudo apt-get install libterm-readline-gnu-perl mariadb-server ca-certificates zip unzip apt-transport-https lsb-release curl dirmngr -y
