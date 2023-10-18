@@ -11,7 +11,7 @@ export SERVICE_TYPE=simple
 sudo apt-get update -y
 sudo apt-get upgrade -y
 sudo apt-get install libterm-readline-gnu-perl mariadb-server ca-certificates zip unzip apt-transport-https lsb-release curl dirmngr -y
-sudo unzip webapp.zip
+sudo unzip webapp.zip -d webapp
 sudo mysql -u root <<MYSQL_SCRIPT
 GRANT ALL PRIVILEGES ON *.* TO '$USER'@'localhost' IDENTIFIED BY '$PASS' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
