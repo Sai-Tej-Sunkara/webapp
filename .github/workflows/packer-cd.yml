@@ -1,0 +1,39 @@
+name: packer-hcl
+'on':
+  pull_request:
+    types:
+      - closed
+    branches:
+      - main
+env:
+  AWS_PROFILE: '${{ secrets.AWS_PROFILE }}'
+  AWS_REGION: '${{ secrets.AWS_REGION }}'
+  DEMO_AMI_USER: '${{ secrets.DEMO_AMI_USER }}'
+  DEV_AMI_USER: '${{ secrets.DEV_AMI_USER }}'
+  INSTANCE: '${{ secrets.INSTANCE }}'
+  SOURCE_AMI: '${{ secrets.SOURCE_AMI }}'
+  SSH_USERNAME: '${{ secrets.SSH_USERNAME }}'
+  VOLUME_SIZE: '${{ secrets.VOLUME_SIZE }}'
+  VOLUME_TYPE: '${{ secrets.VOLUME_TYPE }}'
+  PROTECT_FROM_TERMINATION: '${{ secrets.PROTECT_FROM_TERMINATION }}'
+  LOGICAL_DEVICE_NAME: '${{ secrets.LOGICAL_DEVICE_NAME }}'
+  MYSQL_USERNAME: '${{ secrets.MYSQL_USERNAME }}'
+  MYSQL_PASSWORD: '${{ secrets.MYSQL_PASSWORD }}'
+  HOST: '${{ secrets.HOST }}'
+  DATABASE: '${{ secrets.DATABASE }}'
+  KEY_ID: '${{ secrets.KEY_ID }}'
+  SECRET_KEY: '${{ secrets.SECRET_KEY }}'
+jobs:
+  merge:
+    if: github.event.pull_request.merged
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Git Repository
+        uses: actions/checkout@v2
+      - name: Packer build
+        id: packer_build
+        uses: hashicorp/packer-github-actions@master
+        with:
+          command: build
+          target: ./packer/amazon-machine-image.pkr.hcl
+          working_directory: .

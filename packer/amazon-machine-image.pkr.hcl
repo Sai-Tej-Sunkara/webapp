@@ -39,12 +39,12 @@ variable "source_ami" {
 
 variable "ssh_username" {
     type = string
-    default = "admin" # env("SSH_USERNAME")
+    default = "admin"
 }
 
 variable "volume_size" {
     type = number
-    default =  25 # parseint(env("VOLUME_SIZE"))
+    default =  25
 }
 
 variable "volume_type" {
@@ -54,7 +54,7 @@ variable "volume_type" {
 
 variable "protect_from_termination" {
     type = bool
-    default = false # env("PROTECT_FROM_TERMINATION")
+    default = true
 }
 
 variable "logical_device_name" {
@@ -73,22 +73,21 @@ variable "secret_key" {
 }
 
 source "amazon-ebs" "amazon-machine-image-002728188" {
-    # profile         = var.profile
     access_key   = "${var.access_key}"
     secret_key   = "${var.secret_key}"
     region          = var.aws_region
     ami_users       = [var.dev_ami_user, var.demo_ami_user]
     ami_name        = "${formatdate("YYYY_MM_DD_HH_MM", timestamp())}_Cloud_Computing_6225_Debain"
     ami_description = "Amazon Machine Image for Assignments, Healthz Application"
-    instance_type   = "t2.micro" #var.instance
-    source_ami      = "ami-06db4d78cb1d3bbf9" # "${var.source_ami}"
+    instance_type   = "t2.micro"
+    source_ami      = "ami-06db4d78cb1d3bbf9"
     ssh_username    = "${var.ssh_username}"
     aws_polling {
         delay_seconds = 180
         max_attempts  = 25
     }
     launch_block_device_mappings {
-        device_name           = "/dev/xvda" # var.logical_device_name
+        device_name           = "/dev/xvda"
         volume_size           = var.volume_size
         volume_type           = var.volume_type
         delete_on_termination = var.protect_from_termination
