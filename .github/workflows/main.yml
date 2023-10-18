@@ -1,4 +1,4 @@
-name: Continuous Integration - Healthz Application
+name: Continuous Integration - Healthz Application and Packer Validation
 'on':
   pull_request:
     branches:
@@ -28,3 +28,6 @@ jobs:
       - run: systemctl status mysql
       - run: sudo mysql --user=${{ secrets.USER_ROOT }} --password=${{ secrets.PASS_ROOT }} -e "create database ${{ secrets.DATABASE }}";
       - run: npm test
+      - run: packer init packer/amazon-machine-image.pkr.hcl
+      - run: packer fmt packer/amazon-machine-image.pkr.hcl
+      - run: packer validate packer/amazon-machine-image.pkr.hcl
