@@ -39,7 +39,7 @@ variable "source_ami" {
 
 variable "ssh_username" {
     type = string
-    default = "admin"
+    default = env("SSH_USERNAME")
 }
 
 variable "volume_size" {
