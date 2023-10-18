@@ -1,12 +1,10 @@
 name: Build Packer App
-
-on:
+'on':
   pull_request:
     types:
       - closed
     branches:
       - main
-
 env:
   AWS_PROFILE: '${{ secrets.AWS_PROFILE }}'
   AWS_REGION: '${{ secrets.AWS_REGION }}'
@@ -25,7 +23,6 @@ env:
   DATABASE: '${{ secrets.DATABASE }}'
   KEY_ID: '${{ secrets.KEY_ID }}'
   SECRET_KEY: '${{ secrets.SECRET_KEY }}'
-
 jobs:
   packer-build:
     if: github.event.pull_request.merged
@@ -40,11 +37,9 @@ jobs:
       matrix:
         node-version:
           - 16.x
-
     steps:
       - name: Checkout Git Repository
         uses: actions/checkout@v2
-      
       - run: npm i
       - name: 'Using, Node, Express, and Sequelize'
         uses: actions/setup-node@v2
@@ -53,28 +48,36 @@ jobs:
           cache: npm
       - run: sudo systemctl start mysql
       - run: systemctl status mysql
-      - run: sudo mysql --user=${{ secrets.USER_ROOT }} --password=${{ secrets.PASS_ROOT }} -e "create database ${{ secrets.DATABASE }}";
+      - run: >-
+          sudo mysql --user=${{ secrets.USER_ROOT }} --password=${{
+          secrets.PASS_ROOT }} -e "create database ${{ secrets.DATABASE }}";
       - run: npm test
-
       - name: Install Packer
-        run: |
-          curl -SL https://releases.hashicorp.com/packer/1.4.2/packer_1.4.2_linux_amd64.zip -o packer_1.4.2_linux_amd64.zip
+        run: >
+          curl -SL
+          https://releases.hashicorp.com/packer/1.4.2/packer_1.4.2_linux_amd64.zip
+          -o packer_1.4.2_linux_amd64.zip
+
           unzip -o packer_1.4.2_linux_amd64.zip -d /tmp
+
           sudo mv /tmp/packer /usr/bin/packer
+
           packer --version
-      
       - name: Create webapp.zip
         run: |
-            cd packer
-            rm -f webapp.zip
-            cd ..
-            zip -r ./packer/webapp.zip .
-
-      - name: Initialize Packer Configuration
+          cd packer
+          rm -f webapp.zip
+          cd ..
+          zip -r ./packer/webapp.zip .
+      - name: Initialize Packer Configuration and Format packer file
         run: |
           cd packer
           packer init amazon-machine-image.pkr.hcl
-
+          packer fmt amazon-machine-image.pkr.hcl
+      - name: Validate Packer Configuration
+        run: |
+          cd packer
+          packer validate amazon-machine-image.pkr.hcl
       - name: Build Amazon Machine Image
         run: |
           cd packer

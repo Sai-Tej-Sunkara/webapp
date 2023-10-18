@@ -27,10 +27,11 @@ jobs:
         cd ..
         zip -r ./packer/webapp.zip .
 
-    - name: Initialize Packer Configuration
+    - name: Initialize Packer Configuration and Format packer file
       run: |
         cd packer
         packer init amazon-machine-image.pkr.hcl
+        packer fmt amazon-machine-image.pkr.hcl
 
     - name: Validate Packer Configuration
       run: |
