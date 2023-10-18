@@ -48,7 +48,6 @@ Restart=on-failure
 WantedBy=multi-user.target
 EOF
 
-sudo chmod 755 ~/webapp/
 sudo systemctl daemon-reload
 sudo systemctl enable webapp.service
 sudo systemctl start webapp.service
