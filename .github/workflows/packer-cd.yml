@@ -30,10 +30,12 @@ jobs:
     steps:
       - name: Checkout Git Repository
         uses: actions/checkout@v2
+      - name: Change Directory to 'packer'
+        run: cd packer
+      - name: Packer Init
+        run: packer init amazon-machine-image.pkr.hcl
       - name: Packer build
         id: packer_build
         uses: hashicorp/packer-github-actions@master
         with:
           command: build
-          target: ./packer/amazon-machine-image.pkr.hcl
-          working_directory: .
