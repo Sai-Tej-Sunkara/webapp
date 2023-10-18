@@ -16,8 +16,8 @@ jobs:
     - name: Install Packer
       run: |
         curl -SL https://releases.hashicorp.com/packer/1.4.2/packer_1.4.2_linux_amd64.zip -o packer_1.4.2_linux_amd64.zip
-        unzip -o packer_1.4.2_linux_amd64.zip
-        sudo mv packer /usr/bin/packer
+        unzip -o packer_1.4.2_linux_amd64.zip -d /tmp
+        sudo mv /tmp/packer /usr/bin/packer
         packer --version
 
     - name: Validate Packer Configuration
