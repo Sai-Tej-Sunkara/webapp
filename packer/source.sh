@@ -19,8 +19,8 @@ cd ~/webapp/
 sudo npm install
 cat <<EOF | sudo tee /etc/systemd/system/webapp.service
 [Unit]
-Description=server.js-service file to start the server instance in ec2
-Documentation=https://wwww.example.com/
+Description=app.js-service file to start the server instance in ec2
+Documentation=https://fall2023.csye6225.cloud/
 Wants=network-online.target
 After=network-online.target
 
@@ -32,7 +32,7 @@ Environment="PASS=$PASS"
 Type=simple
 User=admin
 WorkingDirectory=/home/admin/webapp/
-ExecStart=/usr/bin/node /home/admin/webapp/server.js
+ExecStart=/usr/bin/node /home/admin/webapp/app.js
 Restart=on-failure
 
 [Install]
