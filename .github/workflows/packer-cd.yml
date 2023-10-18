@@ -1,4 +1,4 @@
-name: Validate Packer Configuration and Build App
+name: Build Packer App
 
 on:
   pull_request:
@@ -28,6 +28,7 @@ env:
 
 jobs:
   merge:
+    if: github.event.pull_request.merged
     runs-on: ubuntu-latest
 
     steps:
