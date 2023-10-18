@@ -1,0 +1,31 @@
+name: Validate Packer Configuration and Create webapp.zip
+
+on:
+  pull_request:
+    paths:
+      - 'packer/**'
+
+jobs:
+  validate-packer:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install Packer
+      run: |
+        curl -SL https://releases.hashicorp.com/packer/1.4.2/packer_1.4.2_linux_amd64.zip -o packer_1.4.2_linux_amd64.zip
+        unzip packer_1.4.2_linux_amd64.zip
+        sudo mv packer /usr/bin/packer
+        packer --version
+
+    - name: Validate Packer Configuration
+      run: |
+        cd packer
+        packer validate amazon-machine-image.pkr.hcl
+
+    - name: Create webapp.zip
+      run: |
+        cd ..
+        zip -r packer/webapp.zip webapp/*
