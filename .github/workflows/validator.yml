@@ -16,7 +16,7 @@ jobs:
     - name: Install Packer
       run: |
         curl -SL https://releases.hashicorp.com/packer/1.4.2/packer_1.4.2_linux_amd64.zip -o packer_1.4.2_linux_amd64.zip
-        unzip -y packer_1.4.2_linux_amd64.zip
+        unzip -o packer_1.4.2_linux_amd64.zip
         sudo mv packer /usr/bin/packer
         packer --version
 
@@ -27,5 +27,6 @@ jobs:
 
     - name: Create webapp.zip
       run: |
-        cd ..
-        zip -r packer/webapp.zip webapp/*
+        cd packer
+        rm -f webapp.zip
+        zip -r webapp.zip webapp/*
