@@ -65,20 +65,14 @@ jobs:
           packer --version
       - name: Create webapp.zip
         run: |
-          cd packer
-          rm -f webapp.zip
-          cd ..
-          zip -r ./packer/webapp.zip .
+          zip -r webapp.zip .
       - name: Initialize Packer Configuration and Format packer file
         run: |
-          cd packer
-          packer init amazon-machine-image.pkr.hcl
-          packer fmt amazon-machine-image.pkr.hcl
+          packer init packer/amazon-machine-image.pkr.hcl
+          packer fmt packer/amazon-machine-image.pkr.hcl
       - name: Validate Packer Configuration
         run: |
-          cd packer
-          packer validate amazon-machine-image.pkr.hcl
+          packer validate packer/amazon-machine-image.pkr.hcl
       - name: Build Amazon Machine Image
         run: |
-          cd packer
-          packer build amazon-machine-image.pkr.hcl
+          packer build packer/amazon-machine-image.pkr.hcl
