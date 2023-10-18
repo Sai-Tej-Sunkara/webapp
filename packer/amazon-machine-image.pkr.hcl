@@ -128,6 +128,12 @@ build {
     destination = "webapp.zip"
   }
   provisioner "shell" {
-    script = "source.sh"
+    script = "packer/source.sh"
+    environment_vars = [
+      "DATABASE=${var.database}",
+      "USER=${var.user}",
+      "PASS=${var.pass}",
+      "HOST=${var.host}"
+    ]
   }
 }
