@@ -1,9 +1,9 @@
 name: Validate Packer Configuration and Create webapp.zip
 
-'on':
-    pull_request:
-      branches:
-        - main
+on:
+  pull_request:
+    branches:
+      - main
 
 jobs:
   validate-packer:
@@ -19,17 +19,20 @@ jobs:
         unzip -o packer_1.4.2_linux_amd64.zip -d /tmp
         sudo mv /tmp/packer /usr/bin/packer
         packer --version
-    - name: Initialize Packer Configuration
-      run: |
-        cd packer
-        packer init amazon-machine-image.pkr.hcl
-    - name: Validate Packer Configuration
-      run: |
-        cd packer
-        packer validate amazon-machine-image.pkr.hcl
+
     - name: Create webapp.zip
       run: |
         cd packer
         rm -f webapp.zip
         cd ..
         zip -r ./packer/webapp.zip .
+
+    - name: Initialize Packer Configuration
+      run: |
+        cd packer
+        packer init amazon-machine-image.pkr.hcl
+
+    - name: Validate Packer Configuration
+      run: |
+        cd packer
+        packer validate amazon-machine-image.pkr.hcl
