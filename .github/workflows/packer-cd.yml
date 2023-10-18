@@ -1,10 +1,12 @@
-name: packer-hcl
-'on':
+name: Validate Packer Configuration and Build App
+
+on:
   pull_request:
     types:
       - closed
     branches:
       - main
+
 env:
   AWS_PROFILE: '${{ secrets.AWS_PROFILE }}'
   AWS_REGION: '${{ secrets.AWS_REGION }}'
@@ -23,19 +25,28 @@ env:
   DATABASE: '${{ secrets.DATABASE }}'
   KEY_ID: '${{ secrets.KEY_ID }}'
   SECRET_KEY: '${{ secrets.SECRET_KEY }}'
+
 jobs:
   merge:
-    if: github.event.pull_request.merged
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout Git Repository
         uses: actions/checkout@v2
-      - name: Change Directory to 'packer'
-        run: cd packer
-      - name: Packer Init
-        run: packer init amazon-machine-image.pkr.hcl
-      - name: Packer build
-        id: packer_build
-        uses: hashicorp/packer-github-actions@master
-        with:
-          command: build
+
+      - name: Install Packer
+        run: |
+          curl -SL https://releases.hashicorp.com/packer/1.4.2/packer_1.4.2_linux_amd64.zip -o packer_1.4.2_linux_amd64.zip
+          unzip -o packer_1.4.2_linux_amd64.zip -d /tmp
+          sudo mv /tmp/packer /usr/bin/packer
+          packer --version
+
+      - name: Initialize Packer Configuration
+        run: |
+          cd packer
+          packer init amazon-machine-image.pkr.hcl
+
+      - name: Build Amazon Machine Image
+        run: |
+          cd packer
+          packer build amazon-machine-image.pkr.hcl
