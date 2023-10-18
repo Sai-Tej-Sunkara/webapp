@@ -73,8 +73,9 @@ variable "secret_key" {
 }
 
 source "amazon-ebs" "amazon-machine-image-002728188" {
-    access_key   = "${var.access_key}"
-    secret_key   = "${var.secret_key}"
+    profile         = "${var.profile}"
+    # access_key   = "${var.access_key}"
+    # secret_key   = "${var.secret_key}"
     region          = var.aws_region
     ami_users       = [var.dev_ami_user, var.demo_ami_user]
     ami_name        = "${formatdate("YYYY_MM_DD_HH_MM", timestamp())}_Cloud_Computing_6225_Debain"
