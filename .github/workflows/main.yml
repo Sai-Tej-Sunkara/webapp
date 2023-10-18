@@ -1,8 +1,11 @@
-name: Continuous Integration - Healthz Application
+name: Continuous Integration - Healthz Application and Packer Validation
 'on':
   pull_request:
     branches:
       - main
+    paths:
+      - 'packer/**'
+
 jobs:
   tests:
     runs-on: ubuntu-latest
@@ -17,7 +20,8 @@ jobs:
         node-version:
           - 16.x
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
       - run: npm i
       - name: 'Using, Node, Express, and Sequelize'
         uses: actions/setup-node@v2
@@ -28,3 +32,29 @@ jobs:
       - run: systemctl status mysql
       - run: sudo mysql --user=${{ secrets.USER_ROOT }} --password=${{ secrets.PASS_ROOT }} -e "create database ${{ secrets.DATABASE }}";
       - run: npm test
+
+  validate-packer:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Install Packer
+        run: |
+          curl -SL https://releases.hashicorp.com/packer/1.4.2/packer_1.4.2_linux_amd64.zip -o packer_1.4.2_linux_amd64.zip
+          unzip -o packer_1.4.2_linux_amd64.zip -d /tmp
+          sudo mv /tmp/packer /usr/bin/packer
+          packer --version
+      - name: Initialize Packer Configuration
+        run: |
+          cd packer
+          packer init amazon-machine-image.pkr.hcl
+      - name: Validate Packer Configuration
+        run: |
+          cd packer
+          packer validate amazon-machine-image.pkr.hcl
+      - name: Create webapp.zip
+        run: |
+          cd packer
+          rm -f webapp.zip
+          cd ..
+          zip -r ./packer/webapp.zip .
