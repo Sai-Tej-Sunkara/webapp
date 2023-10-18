@@ -1,65 +1,30 @@
-name: Continuous Integration - Healthz Application and Packer Validation
-
-on:
+name: Continuous Integration - Healthz Application
+'on':
   pull_request:
     branches:
       - main
-    paths:
-      - 'packer/**'
-
 jobs:
-  node-app-tests:
+  tests:
     runs-on: ubuntu-latest
+    env:
+      DATABASE: '${{ secrets.DATABASE }}'
+      USER: '${{ secrets.USER_ROOT }}'
+      PASS: '${{ secrets.PASS_ROOT }}'
+      HOST: '${{ secrets.HOST }}'
+      DIALECT: '${{ secrets.DIALECT }}'
+    strategy:
+      matrix:
+        node-version:
+          - 16.x
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
+      - uses: actions/checkout@v2
+      - run: npm i
+      - name: 'Using, Node, Express, and Sequelize'
         uses: actions/setup-node@v2
         with:
-          node-version: 16
-
-      - name: Install Dependencies
-        run: npm ci
-
-      - name: Start MySQL
-        run: sudo systemctl start mysql
-
-      - name: Check MySQL Status
-        run: systemctl status mysql
-
-      - name: Create Database
-        run: |
-          sudo mysql --user="${{ secrets.USER_ROOT }}" --password="${{ secrets.PASS_ROOT }}" -e "create database ${{ secrets.DATABASE }}"
-
-      - name: Run Tests
-        run: npm test
-
-  packer-validation:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Install Packer
-        run: |
-          curl -SL https://releases.hashicorp.com/packer/1.4.2/packer_1.4.2_linux_amd64.zip -o packer.zip
-          unzip -o packer.zip -d /usr/local/bin
-          packer --version
-
-      - name: Initialize Packer Configuration
-        run: |
-          cd packer
-          packer init amazon-machine-image.pkr.hcl
-
-      - name: Validate Packer Configuration
-        run: |
-          cd packer
-          packer validate amazon-machine-image.pkr.hcl
-
-      - name: Create webapp.zip
-        run: |
-          cd packer
-          rm -f webapp.zip
-          zip -r webapp.zip .
-
+          node-version: '${{ matrix.node-version }}'
+          cache: npm
+      - run: sudo systemctl start mysql
+      - run: systemctl status mysql
+      - run: sudo mysql --user=${{ secrets.USER_ROOT }} --password=${{ secrets.PASS_ROOT }} -e "create database ${{ secrets.DATABASE }}";
+      - run: npm test
