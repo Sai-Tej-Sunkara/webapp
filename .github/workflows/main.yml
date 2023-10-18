@@ -1,4 +1,4 @@
-name: Continuous Integration - Healthz Application and Packer Validation
+name: Continuous Integration - Healthz Application
 'on':
   pull_request:
     branches:
