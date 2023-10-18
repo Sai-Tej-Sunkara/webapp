@@ -9,7 +9,7 @@ const sequelize = new Sequelize(
   process.env.PASS,
   {
     host: process.env.HOST,
-    dialect: process.env.DIALECT,
+    dialect: mysql,
   }
 );
 
