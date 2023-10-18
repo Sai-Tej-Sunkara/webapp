@@ -39,12 +39,12 @@ variable "source_ami" {
 
 variable "ssh_username" {
     type = string
-    default = env("SSH_USERNAME")
+    default = "admin" # env("SSH_USERNAME")
 }
 
 variable "volume_size" {
     type = number
-    default =  env("VOLUME_SIZE")
+    default =  25 # parseint(env("VOLUME_SIZE"))
 }
 
 variable "volume_type" {
@@ -54,7 +54,7 @@ variable "volume_type" {
 
 variable "protect_from_termination" {
     type = bool
-    default = env("PROTECT_FROM_TERMINATION")
+    default = false # env("PROTECT_FROM_TERMINATION")
 }
 
 variable "logical_device_name" {
