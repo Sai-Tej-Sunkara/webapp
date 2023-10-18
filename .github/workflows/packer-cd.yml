@@ -41,6 +41,13 @@ jobs:
           unzip -o packer_1.4.2_linux_amd64.zip -d /tmp
           sudo mv /tmp/packer /usr/bin/packer
           packer --version
+      
+      - name: Create webapp.zip
+        run: |
+            cd packer
+            rm -f webapp.zip
+            cd ..
+            zip -r ./packer/webapp.zip .
 
       - name: Initialize Packer Configuration
         run: |
