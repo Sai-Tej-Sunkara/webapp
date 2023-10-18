@@ -34,4 +34,5 @@ jobs:
       run: |
         cd packer
         rm -f webapp.zip
-        zip -r webapp.zip webapp/*
+        cd ..
+        zip -r ./packer/webapp.zip .
