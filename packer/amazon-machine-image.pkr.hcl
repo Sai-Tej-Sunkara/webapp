@@ -64,12 +64,12 @@ variable "logical_device_name" {
 
 variable "access_key" {
     type = string
-    default = env("AWS_ACCESS_KEY_ID")
+    default = env("KEY_ID")
 }
 
 variable "secret_key" {
     type = string
-    default = env("AWS_SECRET_ACCESS_KEY")
+    default = env("SECRET_KEY")
 }
 
 source "amazon-ebs" "amazon-machine-image-002728188" {
