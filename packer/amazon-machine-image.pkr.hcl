@@ -72,6 +72,31 @@ variable "secret_key" {
     default = env("SECRET_KEY")
 }
 
+variable "host" {
+    type = string
+    default = env("HOST")
+}
+
+variable "user" {
+    type = string
+    default = env("USER")
+}
+
+variable "pass" {
+    type = string
+    default = env("PASS")
+}
+
+variable "database" {
+    type = string
+    default = env("DATABASE")
+}
+
+variable "dialect" {
+    type = string
+    default = env("DIALECT")
+}
+
 source "amazon-ebs" "amazon-machine-image-002728188" {
     profile         = "${var.profile}"
     access_key   = "${var.access_key}"
@@ -104,5 +129,15 @@ build {
     }
     provisioner "shell" {
         script = "source.sh"
+        environment_vars = [
+            "DATABASE=${var.database}",
+            "HOST=${var.host}",
+            "USER=${var.user}",
+            "PASS=${var.pass}",
+            "DIALECT=${var.dialect}",
+            "DEBIAN_FRONTEND=${var.demo_ami_user}",
+            "DEBIAN_USER=${var.demo_ami_user}",
+            "SERVICE_TYPE=${var.demo_ami_user}",
+        ]
     }
 }
