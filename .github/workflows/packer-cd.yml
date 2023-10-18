@@ -27,7 +27,7 @@ env:
   SECRET_KEY: '${{ secrets.SECRET_KEY }}'
 
 jobs:
-  merge:
+  packer-build:
     if: github.event.pull_request.merged
     runs-on: ubuntu-latest
 
