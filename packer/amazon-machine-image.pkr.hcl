@@ -95,7 +95,7 @@ variable "database" {
 variable "dialect" {
   type    = string
   default = env("DIALECT")
-
+}
 
 source "amazon-ebs" "amazon-machine-image-002728188" {
   profile         = "${var.profile}"
