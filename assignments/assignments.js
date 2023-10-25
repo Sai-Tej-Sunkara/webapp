@@ -346,11 +346,11 @@ router.delete("/assignments/:id", async (req, res)=>{
                       })
                     );
               
-                    res.status(201).end();
+                    res.status(204).end();
                     return;
                   } catch (error) {
                     console.error(error);
-                    res.status(503).send({status: 503, message: "Tables aren't providing information or database could not be providing information or record might be deleted."});
+                    res.status(503).send({status: 503, message: "Service Unavaialble."});
                   }
             }
             else {
