@@ -364,7 +364,7 @@ router.delete("/assignments/:id", async (req, res)=>{
                     return;
                 }
                 else {
-                    res.status(404).send({Status: 404, message: "No Records Found with "+id+" in your assignments"});
+                    res.status(404).end();
                     return;
                 }
             }
@@ -372,7 +372,7 @@ router.delete("/assignments/:id", async (req, res)=>{
           } 
           catch (error) {
             console.error(error);
-            res.status(503).send("Tables aren't providing information or database could not be providing information.");
+            res.status(404).end();
           }
     }
     else {
