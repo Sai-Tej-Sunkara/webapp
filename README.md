@@ -76,5 +76,6 @@ Before you can run this project, you need to have the following software install
 
 - For more information on Node.js, MySQL, or the dependencies used in this project, please refer to their respective documentation.
 
-Thank you for using this project!
+- RDS Created for decoupling EC2 instance and Database
 
+Thank you for using this project!
