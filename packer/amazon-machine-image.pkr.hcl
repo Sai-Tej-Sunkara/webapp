@@ -34,7 +34,7 @@ variable "instance" {
 
 variable "source_ami" {
   type    = string
-  default = "ami-06db4d78cb1d3bbf9" # env("SOURCE_AMI")
+  default = "ami-06db4d78cb1d3bbf9"
 }
 
 variable "ssh_username" {
