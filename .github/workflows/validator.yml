@@ -27,7 +27,7 @@ jobs:
     - name: Initialize Packer Configuration and Format packer file
       run: |
         packer init packer/amazon-machine-image.pkr.hcl
-        packer fmt packer/amazon-machine-image.pkr.hcl
+        packer fmt -check packer/amazon-machine-image.pkr.hcl
 
     - name: Validate Packer Configuration
       run: |
