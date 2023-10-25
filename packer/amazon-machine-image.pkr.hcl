@@ -103,7 +103,7 @@ source "amazon-ebs" "amazon-machine-image-002728188" {
   secret_key      = "${var.secret_key}"
   region          = var.aws_region
   ami_users       = [var.dev_ami_user, var.demo_ami_user]
-  ami_name        = "${formatdate("YYYY_MM_DD_HH_MM", timestamp())}_Cloud_Computing_6225_Debain"
+  ami_name        = "WEBAPP_${formatdate("YYYY_MM_DD_HH_MM", timestamp())}_Cloud_Computing_6225_Debain"
   ami_description = "Amazon Machine Image for Assignments, Healthz Application"
   instance_type   = "t2.micro"
   source_ami      = "${var.source_ami}"
