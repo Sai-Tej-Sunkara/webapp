@@ -97,7 +97,7 @@ variable "dialect" {
   default = env("DIALECT")
 }
 
-  source "amazon-ebs" "amazon-machine-image-002728188" {
+source "amazon-ebs" "amazon-machine-image-002728188" {
   profile         = "${var.profile}"
   access_key      = "${var.access_key}"
   secret_key      = "${var.secret_key}"
