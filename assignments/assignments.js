@@ -1,6 +1,8 @@
 const express = require("express");
 const user_authentication = require("../user-authenticator/user-authenticator");
 const router = express.Router();
+const logger = require("../logs/logger");
+const statsd = require("../statsd/statsd");
 
 const {sequelize, User, Assignment} = require("../sequelize");
 const { create_table_and_insert_data, authenticateDatabase } = require("../file");
@@ -24,6 +26,7 @@ let checkDatabaseConnection = async (req, res) => {
 }
 
 router.get("/assignments", async (req, res)=>{
+    statsd.increment("GET.v1.assignments");
     if(!checkDatabaseConnection(req, res)) {
         return;
     }
@@ -90,6 +93,7 @@ router.get("/assignments", async (req, res)=>{
 })
 
 router.post("/assignments", async (req, res)=>{
+    statsd.increment("POST.v1.assignments");
     if(!checkDatabaseConnection(req, res)) {
         return;
     }
@@ -204,6 +208,7 @@ router.post("/assignments", async (req, res)=>{
 })
 
 router.get("/assignments/:id", async (req, res)=>{
+    statsd.increment("GET.v1.assignments.id");
     if(!checkDatabaseConnection(req, res)) {
         return;
     }
@@ -306,6 +311,7 @@ router.get("/assignments/:id", async (req, res)=>{
 })
 
 router.delete("/assignments/:id", async (req, res)=>{
+    statsd.increment("DELETE.v1.assignments.id");
     if(!checkDatabaseConnection(req, res)) {
         return;
     }
@@ -391,6 +397,7 @@ router.delete("/assignments/:id", async (req, res)=>{
 })
 
 router.put("/assignments/:id", async (req, res)=>{
+    statsd.increment("PUT.v1.assignments.id");
     if(!checkDatabaseConnection(req, res)) {
         return;
     }
