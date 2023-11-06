@@ -1,5 +1,6 @@
 const { User, sequelize, Assignment } = require("../sequelize");
 const bcrypt = require("bcrypt");
+const logger = require("../logs/logger");
 
 const check_user = async (username, password) => {
     try {
@@ -7,20 +8,25 @@ const check_user = async (username, password) => {
       try {
         const user = await User.findOne({ where: { email: username } });
         if (!user) {
+          logger.error("Authentication Failed - User not found - User is not found. If you have added recently to users.csv, don't worry. I will create that user automatically. Try this request now.");
           return {isValid: false, message: "Authentication Failed - User not found - User is not found. If you have added recently to users.csv, don't worry. I will create that user automatically. Try this request now."}
         }
         const isPasswordValid = await bcrypt.compare(password, user.password);
     
         if (isPasswordValid) {
+          logger.info("Authentication Failed - User not found - User is not found. If you have added recently to users.csv, don't worry. I will create that user automatically. Try this request now.");
           return {isValid: true, message: "Authentication Success", user: user.id};
         }
+        logger.error("Authentication Failed - Password Not Valid");
         return {isValid: false, message: "Authentication Failed - Password Not Valid"};
       } catch (error) {
         console.error(error);
+        logger.error("Database or Table isn't providing information right now. Never worry. I have been configured to automatically Create Tables for You");
         return {isValid: false, message: "Database or Table isn't providing information right now. Never worry. I have been configured to automatically Create Tables for You.", status: 503};
       }
     } catch (error) {
       console.error(error);
+      logger.error("Database or Table isn't providing information right now. Never worry. I have been configured to automatically Create Tables for You.");
       return {isValid: false, message: "Database or Table isn't providing information right now. Never worry. I have been configured to automatically Create Tables for You.", status: 503};
     }
   };
