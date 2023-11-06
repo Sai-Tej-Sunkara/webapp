@@ -3,6 +3,8 @@ const fs = require("fs");
 const csv = require("csv-parser");
 const bcrypt = require("bcrypt");
 const path = require("path");
+const logger = require("./logs/logger");
+const statsd = require("./statsd/statsd");
 
 const filepath = path.join(__dirname, "./data/users.csv");
 
@@ -57,11 +59,14 @@ let create_table_and_insert_data = (sequelize) => {
 
 let authenticateDatabase = () => {
   sequelize.authenticate().then(()=>{
+    statsd.increment("Authenticated Database");
     console.log("Database Connection Established Successfully!");
     create_table_and_insert_data(sequelize);
+    logger.info("Database Connection Established Successfully and Authenticated");
   }).catch((error)=>{
       console.error(error);
       console.error("Database Connection Haven't Been Established");
+      logger.info("Database Connection Haven't Been Established and couldn't authenticate it");
   })
 }
 
