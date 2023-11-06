@@ -20,6 +20,7 @@ let checkDatabaseConnection = async (req, res) => {
         res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
         res.setHeader("Pragma", "no-cache");
         res.setHeader("X-Content-Type-Options", "nosniff");
+        logger.info("Database Server not available. Restart your Express Server : "+503);
         res.status(503).send({ Status: 503, message: "Database Server not available. Restart your Express Server" });
         return false;
       }
@@ -34,6 +35,7 @@ router.get("/assignments", async (req, res)=>{
         if(!req.headers.authorization)
    {
        res.status(401);
+       logger.info("Auth token not provided "+401);
        res.send({"Status": 401, "Message": "Please provide an Auth token."});
        return;
    }
@@ -41,10 +43,12 @@ router.get("/assignments", async (req, res)=>{
 
     if(validation.isValid) {
         if(req.headers["content-length"]>0) {
+            logger.info("Body has some data in get request, which is not valid : "+400);
             res.status(400).send({Status: 400, message:"Please check your headers. Body has some data in get request, which is not valid."});
             return;
         }
         if(Object.keys(req.query).length > 0 ) {
+            logger.info("Query Parameters has some data in get request, which is not valid : "+400);
             res.status(400).send({Status: 400, message:"Please check your headers. Query Parameters has some data in get request, which is not valid."});
             return;
         }
@@ -69,21 +73,25 @@ router.get("/assignments", async (req, res)=>{
                 newAssignment.assignment_updated = assignment.assignment_updated;
                 result.push(newAssignment);
             })
+            logger.info("All assignments retrieved "+200);
             res.status(200).send(result);
             return;
           } 
           catch (error) {
             console.error(error);
+            logger.info("Tables aren't providing information or database could not be providing information."+503);
             res.status(503).send("Tables aren't providing information or database could not be providing information.");
           }
     }
     else {
         if(validation.status == 503) {
+            logger.info(validation.message+" : "+503);
             res.status(503);
             res.send({"Status": 503, "Message": validation.message});
             return;    
         }
         else {
+            logger.info(validation.message+" : "+401);
             res.status(401);
             res.send({"Status": 401, "Message": validation.message});
             return;
@@ -100,6 +108,7 @@ router.post("/assignments", async (req, res)=>{
     else {
         if(!req.headers.authorization)
    {
+       logger.info("Please provide an Auth token : "+401);
        res.status(401);
        res.send({"Status": 401, "Message": "Please provide an Auth token."});
        return;
@@ -109,10 +118,12 @@ router.post("/assignments", async (req, res)=>{
     if(validation.isValid) {
         let user_id_validated = validation.user;
         if(Object.keys(req.query).length > 0 ) {
+            logger.info("Please check your headers. Query Parameters has some data in get request, which is not valid. "+400);
             res.status(400).send({Status: 400, message:"Please check your headers. Query Parameters has some data in get request, which is not valid."});
             return;
         }
         if(Object.keys(req.body).length==0) {
+            logger.info("Request Body only Supports JSON format and need to have all fields "+400);
             res.status(400);
             res.send({"Status": 400, "Message": "Request Body only Supports JSON format and need to have all fields"});
             return;
@@ -120,6 +131,7 @@ router.post("/assignments", async (req, res)=>{
         let keys = Object.keys(req.body);
         keys.map((key)=>{
         if(!(key=="name" || key=="points" || key=="num_of_attemps" || key=="deadline")) {
+            logger.info(key+" is not valid parameter to pass to body : "+400);
             res.status(400);
                 res.send({"Status": 400, "Message": key+" is not valid parameter to pass to body"});
                 return;
@@ -128,6 +140,7 @@ router.post("/assignments", async (req, res)=>{
         let values = Object.values(req.body);
         values.map((value)=>{
         if(value==null || value==undefined || value=="") {
+            logger.info("One or More Values given in keys of body are not supported : "+400);
             res.status(400);
                 res.send({"Status": 400, "Message": "One or More Values given in keys of body are not supported"});
                 return;
@@ -137,21 +150,25 @@ router.post("/assignments", async (req, res)=>{
             const deadlineDate = new Date(req.body.deadline);
             const currentDate = new Date();
             if(req.body.name.trim()=="" || typeof req.body.name != "string") {
+                logger.info("Check your assignment name in body! : "+400);
                 res.status(400);
                 res.send({"Status": 400, "Message": "Check your assignment name in body!"});
                 return;
             }
             else if(req.body.points<0 || req.body.points>10 || typeof req.body.points != "number") {
+                logger.info("Check your assignment points in body! : "+400);
                 res.status(400);
                 res.send({"Status": 400, "Message": "Check your assignment points in body!"});
                 return;
             }
             else if(req.body.num_of_attemps<0 || typeof req.body.num_of_attemps != "number") {
+                logger.info("Check your assignment attemps in body! : "+400);
                 res.status(400);
                 res.send({"Status": 400, "Message": "Check your assignment attemps in body!"});
                 return;
             }
             else if(isNaN(deadlineDate.getTime()) || deadlineDate <= currentDate) {
+                logger.info("Check your assignment deadline in body! - Deadline isn't matching date or deadline is past date : "+400);
                 res.status(400);
                 res.send({"Status": 400, "Message": "Check your assignment deadline in body! - Deadline isn't matching date or deadline is past date"});
                 return;
@@ -183,23 +200,26 @@ router.post("/assignments", async (req, res)=>{
                     "assignment_created": new Date(),
                     "assignment_updated": new Date()
                 }
+                logger.info("Postman Resppnse for  : "+200);
                 res.status(201).send(postResponse);
                 return;
             }
         } 
         catch (error) {
             console.error(error);
+            logger.info("Tables aren't providing information or database could not be providing information : "+503);
             res.status(503).send("Tables aren't providing information or database could not be providing information.");
         }
     }
     else {
         if(validation.status == 503) {
+            logger.info(validation.message+" : "+503);
             res.status(503);
             res.send({"Status": 503, "Message": validation.message});
             return;    
         }
         else {
-            res.status(401);
+            logger.info(validation.message+" : "+401);
             res.send({"Status": 401, "Message": validation.message});
             return;
         }
@@ -215,6 +235,7 @@ router.get("/assignments/:id", async (req, res)=>{
     else {
         if(!req.headers.authorization)
    {
+       logger.info("Please provide an Auth token. : "+401);
        res.status(401);
        res.send({"Status": 401, "Message": "Please provide an Auth token."});
        return;
@@ -223,10 +244,12 @@ router.get("/assignments/:id", async (req, res)=>{
 
     if(validation.isValid) {
         if(req.headers["content-length"]>0) {
+            logger.info("Please check your headers. Body has some data in get request, which is not valid. : "+400);
             res.status(400).send({Status: 400, message:"Please check your headers. Body has some data in get request, which is not valid."});
             return;
         }
         if(Object.keys(req.query).length > 0 ) {
+            logger.info("Please check your headers. Query Parameters has some data in get request, which is not valid. : "+400);
             res.status(400).send({Status: 400, message:"Please check your headers. Query Parameters has some data in get request, which is not valid."});
             return;
         }
@@ -254,6 +277,7 @@ router.get("/assignments/:id", async (req, res)=>{
                     newAssignment.assignment_updated = assignment.assignment_updated;
                     result.push(newAssignment);
                 })
+                logger.info(result+" : "+200);
                 res.status(200).send(result);
                 return;
             }
@@ -280,10 +304,12 @@ router.get("/assignments/:id", async (req, res)=>{
                     newAssignment.assignment_updated = assignment.assignment_updated;
                     result.push(newAssignment);
                     })
+                    logger.info(result+" : "+200);
                     res.status(200).send(result);
                     return;
                 }
                 else {
+                    logger.info("No Records Found with the given id in your assignments : "+404);
                     res.status(404).send({Status: 404, message: "No Records Found with the given id in your assignments"});
                     return;
                 }
@@ -292,16 +318,19 @@ router.get("/assignments/:id", async (req, res)=>{
           } 
           catch (error) {
             console.error(error);
+            logger.info("Tables aren't providing information or database could not be providing information. : "+503);
             res.status(503).send("Tables aren't providing information or database could not be providing information.");
           }
     }
     else {
         if(validation.status == 503) {
+            logger.info(validation.message+" : "+503);
             res.status(503);
             res.send({"Status": 503, "Message": validation.message});
             return;    
         }
         else {
+            logger.info(validation.message+" : "+401);
             res.status(401);
             res.send({"Status": 401, "Message": validation.message});
             return;
@@ -318,6 +347,7 @@ router.delete("/assignments/:id", async (req, res)=>{
     else {
         if(!req.headers.authorization)
    {
+       logger.info("Please provide an Auth token : "+401);
        res.status(401);
        res.send({"Status": 401, "Message": "Please provide an Auth token."});
        return;
@@ -326,10 +356,12 @@ router.delete("/assignments/:id", async (req, res)=>{
 
     if(validation.isValid) {
         if(req.headers["content-length"]>0) {
+            logger.info("Please check your headers. Body has some data in get request, which is not valid. : "+400);
             res.status(400).send({Status: 400, message:"Please check your headers. Body has some data in get request, which is not valid."});
             return;
         }
         if(Object.keys(req.query).length > 0 ) {
+            logger.info("Please check your headers. Query Parameters has some data in get request, which is not valid. : "+400);
             res.status(400).send({Status: 400, message:"Please check your headers. Query Parameters has some data in get request, which is not valid."});
             return;
         }
@@ -351,10 +383,11 @@ router.delete("/assignments/:id", async (req, res)=>{
                         await assignment.destroy();
                       })
                     );
-              
+                    logger.info("204 Retreived All Assignments "+204);
                     res.status(204).end();
                     return;
                   } catch (error) {
+                    logger.info("Service Unavailable "+503);
                     console.error(error);
                     res.status(503).send({status: 503, message: "Service Unavaialble."});
                   }
@@ -366,10 +399,12 @@ router.delete("/assignments/:id", async (req, res)=>{
                     },
                   });
                 if(assignments_check_1.length > 0) {
+                    logger.info("Forbidden to delete others assignemnts! "+403);
                     res.status(403).send({Status: 403, message: "Forbidden to delete others assignemnts!"});
                     return;
                 }
                 else {
+                    logger.info("404 Not Found "+404);
                     res.status(404).end();
                     return;
                 }
@@ -378,16 +413,19 @@ router.delete("/assignments/:id", async (req, res)=>{
           } 
           catch (error) {
             console.error(error);
+            logger.info("404 Not Found "+404);
             res.status(404).end();
           }
     }
     else {
         if(validation.status == 503) {
+            logger.info(validation.message+" : "+503);
             res.status(503);
             res.send({"Status": 503, "Message": validation.message});
             return;    
         }
         else {
+            logger.info(validation.message+" : "+401);
             res.status(401);
             res.send({"Status": 401, "Message": validation.message});
             return;
@@ -404,6 +442,7 @@ router.put("/assignments/:id", async (req, res)=>{
     else {
         if(!req.headers.authorization)
    {
+       logger.info("No Auth Token Provided : "+401);
        res.status(401);
        res.send({"Status": 401, "Message": "Please provide an Auth token."});
        return;
@@ -413,6 +452,7 @@ router.put("/assignments/:id", async (req, res)=>{
 
     if(validation.isValid) {
         if(Object.keys(req.query).length > 0 ) {
+            logger.info("Please check your headers. Query Parameters has some data in get request, which is not valid. : "+400);
             res.status(400).send({Status: 400, message:"Please check your headers. Query Parameters has some data in get request, which is not valid."});
             return;
         }
@@ -421,6 +461,7 @@ router.put("/assignments/:id", async (req, res)=>{
         // console.log(assignment_id, user_id_validated);
 
         if(Object.keys(req.body).length==0) {
+            logger.info("Request Body only Supports JSON format and need to have all fields : "+400);
             res.status(400);
             res.send({"Status": 400, "Message": "Request Body only Supports JSON format and need to have all fields"});
             return;
@@ -428,6 +469,7 @@ router.put("/assignments/:id", async (req, res)=>{
         let keys = Object.keys(req.body);
         keys.map((key)=>{
             if(!(key=="name" || key=="points" || key=="num_of_attemps" || key=="deadline")) {
+                logger.info(key+" is not valid parameter to pass to body : "+400);
                 res.status(400);
                 res.send({"Status": 400, "Message": key+" is not valid parameter to pass to body"});
                 return;
@@ -436,6 +478,7 @@ router.put("/assignments/:id", async (req, res)=>{
         let values = Object.values(req.body);
         values.map((value)=>{
             if(value==null || value==undefined || value=="") {
+                logger.info("One or More Values given in keys of body are not supported : "+400);
                 res.status(400);
                 res.send({"Status": 400, "Message": "One or More Values given in keys of body are not supported"});
                 return;
@@ -447,21 +490,25 @@ router.put("/assignments/:id", async (req, res)=>{
             const deadlineDate = new Date(req.body.deadline);
             const currentDate = new Date();
             if(req.body.name.trim()=="" || typeof req.body.name != "string") {
+                logger.info("Check your assignment name in body! : "+400);
                 res.status(400);
                 res.send({"Status": 400, "Message": "Check your assignment name in body!"});
                 return;
             }
             else if(req.body.points<0 || req.body.points>10 || typeof req.body.points != "number") {
+                logger.info("Check your assignment points in body! : "+400);
                 res.status(400);
                 res.send({"Status": 400, "Message": "Check your assignment points in body!"});
                 return;
             }
             else if(req.body.num_of_attemps<0 || typeof req.body.num_of_attemps != "number") {
+                logger.info("Check your assignment attemps in body! : "+400);
                 res.status(400);
                 res.send({"Status": 400, "Message": "Check your assignment attemps in body!"});
                 return;
             }
             else if(isNaN(deadlineDate.getTime()) || deadlineDate <= currentDate) {
+                logger.info("Check your assignment deadline in body! - Deadline isn't matching date or deadline is past date : "+400);
                 res.status(400);
                 res.send({"Status": 400, "Message": "Check your assignment deadline in body! - Deadline isn't matching date or deadline is past date"});
                 return;
@@ -498,6 +545,7 @@ router.put("/assignments/:id", async (req, res)=>{
                         },
                         });
                         if (!assignmentToUpdate) {
+                        logger.info("Assignment not found : "+404);
                         res.status(404).send({ "Status": 404, "Message": "Assignment not found" });
                         return;
                         }
@@ -507,9 +555,11 @@ router.put("/assignments/:id", async (req, res)=>{
                         assignmentToUpdate.deadline = newAssignment.deadline;
 
                         await assignmentToUpdate.save();
+                        logger.info("Assignment updated successfully : "+200);
                         res.status(200).send({ "Status": 200, "Message": "Assignment updated successfully" });
                         return;
                         } catch (error) {
+                            logger.info("Tables aren't providing information or database could not be providing information. : "+503);
                             console.error(error);
                             res.status(503).send("Tables aren't providing information or database could not be providing information.");
                         }
@@ -521,10 +571,12 @@ router.put("/assignments/:id", async (req, res)=>{
                           },
                         });
                       if(assignments_check_1.length > 0) {
+                          logger.info("Forbidden to update others assignemnts! : "+403);
                           res.status(403).send({Status: 403, message: "Forbidden to update others assignemnts!"});
                           return;
                       }
                       else {
+                          logger.info("No Records Found : "+404);
                           res.status(404).send({Status: 404, message: "No Records Found with "+id+" in your assignments"});
                           return;
                       }
@@ -533,17 +585,20 @@ router.put("/assignments/:id", async (req, res)=>{
             
           } 
           catch (error) {
+            logger.info("Tables aren't providing information or database could not be providing information : "+503);
             console.error(error);
             res.status(503).send("Tables aren't providing information or database could not be providing information.");
           }
     }
     else {
         if(validation.status == 503) {
+            logger.info(validation.message+" : "+503);
             res.status(503);
             res.send({"Status": 503, "Message": validation.message});
             return;    
         }
         else {
+            logger.info(validation.message+" : "+401);
             res.status(401);
             res.send({"Status": 401, "Message": validation.message});
             return;
