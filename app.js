@@ -6,6 +6,7 @@ const { sequelize, User, Assignment } = require("./sequelize");
 const { create_table_and_insert_data, authenticateDatabase } = require("./file");
 const logger = require("./logs/logger");
 const statsd = require("./statsd/statsd");
+const sendMail = require("./mail");
 
 const app = express();
 
@@ -31,12 +32,14 @@ app.get("/healthz", async (req, res) => {
     res.setHeader("Pragma", "no-cache");
     res.setHeader("X-Content-Type-Options", "nosniff");
     logger.info("200 Healthz Successful");
+    sendMail("Mail Regarding Healthz Hit - Success", "Healthz was hit successfully");
     res.status(200).end();
   } catch (error) {
     res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
     res.setHeader("Pragma", "no-cache");
     res.setHeader("X-Content-Type-Options", "nosniff");
     logger.info("503 Service Unavailable");
+    sendMail("Mail Regarding Healthz Hit - Error", "Service Unavailable");
     res.status(503).end();
   }
 });
