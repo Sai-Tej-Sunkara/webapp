@@ -555,8 +555,8 @@ router.put("/assignments/:id", async (req, res)=>{
                         assignmentToUpdate.deadline = newAssignment.deadline;
 
                         await assignmentToUpdate.save();
-                        logger.info("Assignment updated successfully : "+200);
-                        res.status(200).send({ "Status": 200, "Message": "Assignment updated successfully" });
+                        logger.info("Assignment updated successfully : "+204);
+                        res.status(204).send({ "Status": 204, "Message": "Assignment updated successfully" });
                         return;
                         } catch (error) {
                             logger.info("Tables aren't providing information or database could not be providing information. : "+503);
