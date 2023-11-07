@@ -52,8 +52,8 @@ jobs:
           sudo mysql --user=${{ secrets.USER_ROOT }} --password=${{
           secrets.PASS_ROOT }} -e "create database ${{ secrets.DATABASE }}";
       - run: >-
-          sudo mkdir -p /var/log/csye6225/ && sudo touch
-          /var/log/csye6225/webapp.log
+          sudo mkdir -p /var/log/webappLogs/ && sudo touch
+          /var/log/webappLogs/webapp.log
       - run: npm test
       - name: Install Packer
         run: >
