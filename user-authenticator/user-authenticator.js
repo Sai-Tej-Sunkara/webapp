@@ -14,7 +14,7 @@ const check_user = async (username, password) => {
         const isPasswordValid = await bcrypt.compare(password, user.password);
     
         if (isPasswordValid) {
-          logger.info("Authentication Failed - User not found - User is not found. If you have added recently to users.csv, don't worry. I will create that user automatically. Try this request now.");
+          logger.info("Authentication Success");
           return {isValid: true, message: "Authentication Success", user: user.id};
         }
         logger.error("Authentication Failed - Password Not Valid");
