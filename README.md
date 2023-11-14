@@ -1,7 +1,7 @@
 # WebApp Readme
 
 This repository contains a Node.js application that uses MySQL as its database. This README will guide you through the steps to set up and run the project on your local machine.
-twest
+twest-check
 ## Prerequisites
 
 Before you can run this project, you need to have the following software installed on your machine:
