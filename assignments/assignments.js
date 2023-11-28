@@ -5,6 +5,10 @@ const user_authentication = require("../user-authenticator/user-authenticator");
 const router = express.Router();
 const logger = require("../logs/logger");
 const statsd = require("../statsd/statsd");
+const AWS = require("aws-sdk");
+
+AWS.config.update({ region: process.env.AWS_REGION });
+const sns = new AWS.SNS({ apiVersion: process.env.AWS_API_VERSION });
 
 const { sequelize, User, Assignment, Submission } = require("../sequelize");
 const {
@@ -813,6 +817,18 @@ router.post("/assignments/:id/submission", async (req, res) => {
       let user_id_validated = validation.user;
       let assignment_id = req.params.id;
 
+      let user_email = "";
+      if (req.headers.authorization) {
+        const authParts = req.headers.authorization.split(" ");
+        if (authParts.length === 2 && authParts[0] === "Basic") {
+          const credentials = Buffer.from(authParts[1], "base64")
+            .toString("utf-8")
+            .split(":");
+          user_email = credentials[0];
+          const password = credentials[1];
+        }
+      }
+
       if (Object.keys(req.query).length > 0) {
         logger.info(
           "Please check your headers. Query Parameters has some data in get request, which is not valid. " +
@@ -919,8 +935,24 @@ router.post("/assignments/:id/submission", async (req, res) => {
                     submission_date: createdSubmission.submission_date,
                     submission_updated: createdSubmission.submission_updated,
                   };
-                  logger.info("Postman Response for  : " + 201);
-                  res.status(201).send(postResponse);
+
+                  const params = {
+                    Message: `New submission received. URL: ${createdSubmission.submission_url}, User: ${user_email}`,
+                    TopicArn: process.env.TOPIC_ARN,
+                  };
+
+                  sns.publish(params, (err, data) => {
+                    if (err) {
+                      logger.info("Error publishing to SNS", err.stack);
+                      logger.info("Postman Response for  : " + 201);
+                      res.status(201).send(postResponse);
+                    } else {
+                      logger.info(`Message sent to SNS: ${data.MessageId}`);
+                      logger.info("Postman Response for  : " + 201);
+                      res.status(201).send(postResponse);
+                    }
+                  });
+
                   return;
                 } catch (error) {
                   if (error instanceof TypeError) {
