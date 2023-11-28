@@ -91,4 +91,30 @@ const Assignment = sequelize.define("Assignment", {
   timestamps: null,
 });
 
-module.exports = { sequelize, User, Assignment };
+const Submission = sequelize.define("Submission", {
+  id: {
+    type: Sequelize.DataTypes.UUID,
+    primaryKey: true,
+    defaultValue: Sequelize.UUIDV4(),
+  },
+  assignment_id: {
+    type: Sequelize.DataTypes.UUID,
+    allowNull: false,
+  },
+  submission_url: {
+    type: Sequelize.DataTypes.STRING,
+    allowNull: false,
+  },
+  submission_date: {
+    type: Sequelize.DataTypes.DATE,
+    defaultValue: Sequelize.fn("NOW"),
+  },
+  submission_updated: {
+    type: Sequelize.DataTypes.DATE,
+    defaultValue: Sequelize.fn("NOW"),
+  },
+}, {
+  timestamps: null,
+});
+
+module.exports = { sequelize, User, Assignment, Submission };
