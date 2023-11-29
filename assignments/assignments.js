@@ -952,7 +952,7 @@ router.post("/assignments/:id/submission", async (req, res) => {
                     const submissionUrl = req.body.submission_url;
                     const message = {
                       Message: `New submission received. URL: ${submissionUrl}, User: ${user_email}`,
-                      TopicArn: "YOUR_SNS_TOPIC_ARN",
+                      TopicArn: process.env.TOPIC_ARN,
                     };
                     sns.publish(message, (err, data) => {
                       if (err) {
