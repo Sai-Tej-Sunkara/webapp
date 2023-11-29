@@ -7,7 +7,9 @@ const logger = require("../logs/logger");
 const statsd = require("../statsd/statsd");
 const AWS = require("aws-sdk");
 
-const credentials = new AWS.SharedIniFileCredentials({ profile: "demo" });
+const credentials = new AWS.SharedIniFileCredentials({
+  profile: process.env.AWS_PROFILE_CREDS,
+});
 AWS.config.credentials = credentials;
 
 AWS.config.update({ region: process.env.AWS_REGION });
