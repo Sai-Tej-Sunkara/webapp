@@ -903,6 +903,8 @@ router.post("/assignments/:id/submission", async (req, res) => {
           },
         });
 
+        logger.info(assignments.length);
+
         if (assignments.length > 0) {
           const assignment = assignments[0];
           const number_of_attemps = assignment.num_of_attemps;
@@ -914,11 +916,16 @@ router.post("/assignments/:id/submission", async (req, res) => {
             },
           });
 
+          logger.info(submissions.length);
+
           if (submissions.length < number_of_attemps) {
             let date_passed = null;
             const currentDate = new Date();
             const dueDate = new Date(due_date);
             date_passed = currentDate > dueDate;
+
+            logger.info(date_passed);
+
             if (!date_passed) {
               try {
                 const url = req.body.submission_url;
@@ -929,6 +936,8 @@ router.post("/assignments/:id/submission", async (req, res) => {
                     submission_url: url,
                   };
 
+                  logger.info(newSubmission);
+
                   for (const key in newSubmission) {
                     if (key !== "submission_url") {
                       delete newSubmission[key];
@@ -938,7 +947,8 @@ router.post("/assignments/:id/submission", async (req, res) => {
                   const createdSubmission = await Submission.create(
                     newSubmission
                   );
-                  console.log(createdSubmission);
+
+                  logger.info(createdSubmission);
 
                   let postResponse = {
                     id: createdSubmission.id,
@@ -954,11 +964,16 @@ router.post("/assignments/:id/submission", async (req, res) => {
                       Message: `New submission received. URL: ${submissionUrl}, User: ${user_email}`,
                       TopicArn: process.env.TOPIC_ARN,
                     };
+
+                    logger.info(submissionUrl);
+
                     sns.publish(message, (err, data) => {
                       if (err) {
+                        logger.info(err);
                         console.error("Error publishing to SNS", err);
                         res.status(500).send("Error sending notification");
                       } else {
+                        logger.info(data);
                         console.log("SNS Publish Success", data);
                         res
                           .status(200)
@@ -993,7 +1008,7 @@ router.post("/assignments/:id/submission", async (req, res) => {
               } catch (error) {
                 console.error(error);
                 logger.info(
-                  "Tables aren't providing information or database could not be providing information : " +
+                  `Tables aren't providing information or database could not be providing information : ${error}` +
                     503
                 );
                 res.status(503).send({
