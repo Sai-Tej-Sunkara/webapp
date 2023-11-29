@@ -800,6 +800,19 @@ router.put("/assignments/:id", async (req, res) => {
   }
 });
 
+function isValidUrl(url) {
+  const pattern = new RegExp(
+    "^(https?:\\/\\/)?" + // protocol
+      "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name and extension
+      "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
+      "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
+      "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
+      "(\\#[-a-z\\d_]*)?$",
+    "i"
+  ); // fragment locator
+  return !!pattern.test(url);
+}
+
 router.post("/assignments/:id/submission", async (req, res) => {
   statsd.increment("POST.v1.assignments");
   if (!checkDatabaseConnection(req, res)) {
@@ -910,8 +923,7 @@ router.post("/assignments/:id/submission", async (req, res) => {
               try {
                 const url = req.body.submission_url;
 
-                try {
-                  new URL(url);
+                if (isValidUrl(url)) {
                   const newSubmission = {
                     assignment_id: req.params.id,
                     submission_url: url,
@@ -960,7 +972,7 @@ router.post("/assignments/:id/submission", async (req, res) => {
                   }
 
                   return;
-                } catch (error) {
+                } else {
                   if (error instanceof TypeError) {
                     logger.info("URL is not valid! : " + 400);
                     res.status(400);
@@ -976,6 +988,7 @@ router.post("/assignments/:id/submission", async (req, res) => {
                       Message: "Something is wrong with the URL! Check again.",
                     });
                   }
+                  return;
                 }
               } catch (error) {
                 console.error(error);
