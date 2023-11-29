@@ -7,7 +7,7 @@ const logger = require("../logs/logger");
 const statsd = require("../statsd/statsd");
 const AWS = require("aws-sdk");
 
-AWS.config.update({ region: process.env.AWS_REGION });
+AWS.config.update({ region: process.env.AWS_REGION_CHECK });
 const sns = new AWS.SNS();
 
 const { sequelize, User, Assignment, Submission } = require("../sequelize");
