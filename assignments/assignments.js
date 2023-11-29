@@ -903,7 +903,7 @@ router.post("/assignments/:id/submission", async (req, res) => {
           },
         });
 
-        logger.info(assignments.length);
+        logger.info(assignments.length); //1
 
         if (assignments.length > 0) {
           const assignment = assignments[0];
@@ -916,7 +916,7 @@ router.post("/assignments/:id/submission", async (req, res) => {
             },
           });
 
-          logger.info(submissions.length);
+          logger.info(submissions.length); // 0
 
           if (submissions.length < number_of_attemps) {
             let date_passed = null;
@@ -924,10 +924,10 @@ router.post("/assignments/:id/submission", async (req, res) => {
             const dueDate = new Date(due_date);
             date_passed = currentDate > dueDate;
 
-            logger.info(date_passed);
+            logger.info(date_passed); // false
 
             if (!date_passed) {
-              try {
+              try { // error try
                 const url = req.body.submission_url;
 
                 if (isValidUrl(url)) {
@@ -939,7 +939,7 @@ router.post("/assignments/:id/submission", async (req, res) => {
                   logger.info(newSubmission);
 
                   for (const key in newSubmission) {
-                    if (key !== "submission_url") {
+                    if (key !== "submission_url" && key !== "assignment_id") {
                       delete newSubmission[key];
                     }
                   }
