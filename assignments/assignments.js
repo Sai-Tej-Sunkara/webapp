@@ -7,13 +7,8 @@ const logger = require("../logs/logger");
 const statsd = require("../statsd/statsd");
 const AWS = require("aws-sdk");
 
-const credentials = new AWS.SharedIniFileCredentials({
-  profile: process.env.AWS_PROFILE_CREDS,
-});
-AWS.config.credentials = credentials;
-
 AWS.config.update({ region: process.env.AWS_REGION });
-const sns = new AWS.SNS({ apiVersion: process.env.AWS_API_VERSION });
+const sns = new AWS.SNS();
 
 const { sequelize, User, Assignment, Submission } = require("../sequelize");
 const {
@@ -941,22 +936,28 @@ router.post("/assignments/:id/submission", async (req, res) => {
                     submission_updated: createdSubmission.submission_updated,
                   };
 
-                  const params = {
-                    Message: `New submission received. URL: ${createdSubmission.submission_url}, User: ${user_email}`,
-                    TopicArn: process.env.TOPIC_ARN,
-                  };
-
-                  sns.publish(params, (err, data) => {
-                    if (err) {
-                      logger.info("Error publishing to SNS", err.stack);
-                      logger.info("Postman Response for  : " + 201);
-                      res.status(201).send(postResponse);
-                    } else {
-                      logger.info(`Message sent to SNS: ${data.MessageId}`);
-                      logger.info("Postman Response for  : " + 201);
-                      res.status(201).send(postResponse);
-                    }
-                  });
+                  try {
+                    const submissionUrl = req.body.submission_url;
+                    const message = {
+                      Message: `New submission received. URL: ${submissionUrl}, User: ${user_email}`,
+                      TopicArn: "YOUR_SNS_TOPIC_ARN",
+                    };
+                    sns.publish(message, (err, data) => {
+                      if (err) {
+                        console.error("Error publishing to SNS", err);
+                        res.status(500).send("Error sending notification");
+                      } else {
+                        console.log("SNS Publish Success", data);
+                        res
+                          .status(200)
+                          .send(
+                            "Submission and notification sent successfully"
+                          );
+                      }
+                    });
+                  } catch (error) {
+                    res.status(503).end();
+                  }
 
                   return;
                 } catch (error) {
