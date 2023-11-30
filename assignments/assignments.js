@@ -961,7 +961,7 @@ router.post("/assignments/:id/submission", async (req, res) => {
                   try {
                     const submissionUrl = req.body.submission_url;
                     const message = {
-                      Message: `{"user_email": ${user_email}, "submission_url": ${submissionUrl}}`,
+                      Message: JSON.stringify({"user_email": `${user_email}`, "submission_url": `${submissionUrl}`}),
                       TopicArn: process.env.TOPIC_ARN,
                     };
 
